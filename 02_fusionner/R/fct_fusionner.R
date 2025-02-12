@@ -296,3 +296,75 @@ fusionner_releves <- function(
   return(df_releves)
 
 }
+
+#' Obtenir le chemin des données de la dernière version de l'appli CAPI
+#'
+#' @param dir Caractère. Chemin des données téléchargée.
+#'
+#' @return Caractère. Chemin complet de la dernière version.
+#'
+#' @importFrom fs dir_ls path_file path_ext_remove path
+#' @importFrom stringr str_extract
+obtenir_chemin_der_version <- function(dir) {
+
+  # créer une de fichiers zip sans extension
+  # qui serviront de nom de sous-répertoires
+  dirs <- dir |>
+    fs::dir_ls(
+      type = "file",
+      regexp = "\\.zip"
+    ) |>
+    fs::path_file() |>
+    fs::path_ext_remove()
+
+  # extraire la version
+  versions <- dirs |>
+    stringr::str_extract(pattern = "(?<=_)([0-9])(?=_STATA_All)") |>
+    as.numeric()
+
+  # obtenir l'indice de la version la plus élevée
+  max_version_index <- which(versions == max(versions))
+
+  # sélectionner le sous-répertoire avec la dernière version
+  sous_dir_derniere_version <- dirs[max_version_index]
+
+  # construire le chemin complet de ce sous répertoire
+  dir_derniere_version <- fs::path(dir, sous_dir_derniere_version)
+
+  return(dir_derniere_version)
+
+}
+
+#' Obtenir les chemins des représentations structurées du questionnaire
+#'
+#' @description
+#' En particulier, le chemin du questionnaire en format JSON et du répertoire
+#' où se trouve les catégorie réutilisables.
+#'
+#' @param dir Caractère. Chemin des données de la dernière version du
+#' questionnaire.
+#'
+#' @return Liste< Contient:
+#' - Chemin du fichier JSON : `chemin_qnr_json`
+#' - Répertoire des catégories réutilisables : `dir_categories`
+#'
+#' @importFrom fs path
+#' @importFrom susoflows unzip_to_dir
+obtenir_chemins_qnr <- function(dir) {
+
+  # construire le chemin à partir de celui de la dernière version
+  dir_qnr <- fs::path(dir, "Questionnaire")
+
+  # décomprimer le contenu du questionnaire
+  susoflows::unzip_to_dir(dir_qnr)
+  dir_qnr_contenu <- fs::path(dir_qnr, "content")
+
+  # construire chemins du fichier JSON
+  chemins_qnr <- list(
+    chemin_qnr_json = fs::path(dir_qnr_contenu, "document.json"),
+    dir_categories = fs::path(dir_qnr_contenu, "Categories")
+  )
+
+  return(chemins_qnr)
+
+}
