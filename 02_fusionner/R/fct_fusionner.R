@@ -67,12 +67,85 @@ harmoniser_noms_vars <- function(
         .fn = ~ stringr::str_replace(
           string = .x,
           pattern = glue::glue("{regexpr_groupe}(?=__id)"),
-          replacement = "produit"
+          replacement = "produits"
         )
       )
     )
 
   return(dfs_renommes)
+
+}
+
+#' Identifier la base principale au niveau marché
+#'
+#' @description
+#' Par logique d'exclusion, identifier la base principale. Autrement dit,
+#' la base qui n'est ni une base produit/unité/taille ni une base de SuSo.
+#'
+#' @param dir Caractère. Chemin du répertoire qui contient toutes les bases
+#' d'une version de l'appli CAPI.
+#'
+#' @return Caractère. Chemin de la base principale (marché) dans le répertoire
+#'
+#' @importFrom glue glue_collapse glue
+#' @importFrom fs dir_ls path_file
+#' @importFrom stringr str_detect
+identifier_base_marche <- function(dir) {
+
+  groupes_or <- glue::glue_collapse(
+    x = groupes,
+    sep = "|"
+  )
+
+  chemin_fichiers <- dir |>
+    fs::dir_ls(
+      type = "file",
+      recurse = FALSE
+    )
+
+  fichiers <- fs::path_file(chemin_fichiers)
+
+  quel_fichier <- stringr::str_detect(
+    string = fichiers,
+    pattern = glue::glue(
+      "^(?!(assignment|interview|unites|tailles|{groupes_or})).+\\.dta"
+    )
+  )
+
+  marche_nom_fichier <- chemin_fichiers[quel_fichier]
+
+  return(marche_nom_fichier)
+
+}
+
+#' Fusionner la base du niveau marché
+#'
+#' @param dir_parent Caractère. Chemin où les bases brutes sont téléchargées.
+#'
+#' @return Data frame. Base fusionnée.
+#'
+#' @importFrom fs dir_ls
+#' @importFrom purrr map_chr map
+#' @importFrom haven read_dta
+#' @importFrom dplyr bind_rows
+fusionner_marche <- function(dir_parent) {
+
+  dirs_enfant <- fs::dir_ls(
+    path = dir_parent,
+    type = "directory",
+    recurse = FALSE
+  )
+
+  chemins_marche <- dirs_enfant |>
+    purrr::map_chr(
+      .f = ~ identifier_base_marche(dir = .x)
+    )
+
+  marche_df <- chemins_marche |>
+    purrr::map(
+      .f = ~ haven::read_dta(file = .x)
+    ) |>
+    dplyr::bind_rows()
 
 }
 
@@ -100,6 +173,7 @@ fusionner_produits <- function(
   # compiler le lien des fichiers cible
   chemins_produits <- fs::dir_ls(
     path = dir,
+    type = "file",
     regexp = regexpr_produit,
     perl = TRUE
   )
@@ -137,6 +211,7 @@ fusionner_unites_retrouvees <- function(
 
   chemins_unites <- fs::dir_ls(
     path = dir,
+    type = "file",
     regexp = regexpr_unites,
     perl = TRUE
   )
@@ -171,6 +246,7 @@ fusionner_unites_absentes <- function(
 
   chemins_unites <- fs::dir_ls(
     path = dir,
+    type = "file",
     regexp = "unites_absentes",
     perl = TRUE
   )
