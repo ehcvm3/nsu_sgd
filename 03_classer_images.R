@@ -87,6 +87,7 @@ lbls_unites <- groupes |>
 
 df_chemins_cible <- composer_chemins_cible(
   chemin_unites = fs::path(dir_donnees_fusionnees, "unites_retrouvees.dta"),
+  chemin_marches = fs::path(dir_donnees_fusionnees, "marches.dta"),
   lbls_produits = lbls_produits,
   lbls_unites = lbls_unites
 )

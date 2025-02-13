@@ -132,9 +132,13 @@ extraire_info_cle_images <- function(df) {
 #' Composer les chemins cibles où classer les images
 #'
 #' @description
+#' Avec les données collectées :
+#' - Identifier les répertoires requis (i.e. combinaisons strate-produit-unité)
+#' - Composer les chemins relatifs pour ces combinaisons
 #' 
 #' @param chemin_unites Caractère. Chemin des de la base des unités retrouvées
 #' fusionnée.
+#' @param chemin_marches Caractère. Chemin des de la base du niveau marché.
 #' @param lbls_produits Vecteur caractère nommé. Contient les étiquettes de
 #' valeur des produits.
 #' @param lbls_unites Vecteur caractère nommé. Contient les étiquettes de
@@ -149,15 +153,27 @@ extraire_info_cle_images <- function(df) {
 #' @importFrom glue glue
 composer_chemins_cible <- function(
   chemin_unites,
+  chemin_marches,
   lbls_produits,
   lbls_unites
 ) {
 
-  repertoires_a_creer <- chemin_unites |>
-    # ingérer la base fusionnée
+  # ingérer et préparer les bases d'entrée
+  marches_df <- chemin_marches |>
     haven::read_dta() |>
-    # ne retenir que les combinaisons distinctes de produit et d'unité
-    dplyr::distinct(produits__id, unites__id) |>
+    dplyr::select(interview__id, interview__key, marche_strate)
+  unites_retrouvees_df <- chemin_unites |>
+    haven::read_dta()
+
+  repertoires_a_creer <- unites_retrouvees_df |>
+    dplyr::left_join(
+      y = marches_df,
+      by = c("interview__id", "interview__key")
+    ) |>
+    # exclure les observations sans photo
+    dplyr::filter(photo_deja == 2) |>
+    # ne retenir que les combinaisons distinctes de strate-produit-unité
+    dplyr::distinct(marche_strate, produits__id, unites__id) |>
     # appliquer les étiquettes de valeur extraites du questionnaire JSON
     labelled::set_value_labels(
       produits__id = lbls_produits,
@@ -165,24 +181,31 @@ composer_chemins_cible <- function(
     ) |>
     # créer les codes et les noms afin de composer le chemin cible
     dplyr::mutate(
+      # strate
+      code_strate = haven::zap_labels(marche_strate),
+      nom_strate = labelled::to_character(marche_strate),
+      # produit
       code_produit = haven::zap_labels(produits__id),
       nom_produit = labelled::to_character(produits__id, levels = "labels"),
+      # unité
       code_unite = haven::zap_labels(unites__id),
       nom_unite = labelled::to_character(unites__id),
       # purger les caractères interdits dans les chemins chez Windows/Unix
       dplyr::across(
-        .cols = c(nom_produit, nom_unite),
+        .cols = c(nom_strate, nom_produit, nom_unite),
         .fns = ~ purger_mauvais_char_chemin(var = .x)
       ),
       # raccourcir le chemin en enlevant les exemples entre parenthèses
       dplyr::across(
-        .cols = c(nom_produit, nom_unite),
+        .cols = c(nom_strate, nom_produit, nom_unite),
         .fns = ~ raccourcir_chemin(var = .x)
       ),
       # composer les chemins cible avec le code et le nom
       # des produits et des unités, respectivement
       repertoire_cible = glue::glue(
-        "{code_produit}_{nom_produit}/{code_unite}_{nom_unite}"
+        "{code_strate}_{nom_strate}/",
+        "{code_produit}_{nom_produit}/",
+        "{code_unite}_{nom_unite}"
       )
     )
 
