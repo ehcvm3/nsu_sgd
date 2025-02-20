@@ -24,6 +24,28 @@ source(here::here("R", "02_definir_repertoires.R"))
 
 source(fs::path(dir_fusionner, "R", "fct_fusionner.R"))
 
+# ------------------------------------------------------------------------------
+# confirmer que les données sont présentes
+# ------------------------------------------------------------------------------
+
+dirs_bases_telechargees <- fs::dir_ls(
+  path = dir_donnees_telechargees,
+  type = "directory",
+  recurse = FALSE
+)
+
+if (length(dirs_bases_telechargees) == 0) {
+
+  cli::cli_abort(
+    message = c(
+      "x" = "Aucune données téléchargées retrouvées.",
+      "i" = "Veuillez d'abord obtenir les données",
+      "i" = "Pour obtenir, lancer {.file 01_obtenir_01_donnees.R}",
+    )
+  )
+
+}
+
 # ==============================================================================
 # fusionner les bases et harmoniser les noms de variable
 # ==============================================================================
