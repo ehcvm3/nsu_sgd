@@ -17,3 +17,7 @@ groupes <- c(
   "cereales", "viandes", "poissons", "laitier", "huiles",
   "fruits", "legumes", "leg_tub", "sucreries", "epices", "boissons"
 )
+
+# 05 - suivre
+dir_suivre <- here::here("05_suivre")
+dir_suivre_rapport_modele <- fs::path(dir_suivre, "inst")

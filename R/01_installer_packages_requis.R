@@ -118,6 +118,19 @@ pour_02_fusionner_donnees <- c(
   "labelled" # manipulation/application des étiquettes de variable et de valeur
 )
 
+pour_05_suivre <- c(
+  "quarto", # vérifier l'installation de Quarto et créer de documents avec
+  "cli", # afficher des message d'erreurs lisibles
+  "fs", # opérations le système des fichiers
+  "labelled", # manipulation/application des étiquettes de variable et de valeur
+  "tibble", # créer des data frames avec certains attribus
+  "dplyr", # manipulation des données
+  "reactable", # créer des tableaux interactifs
+  "readr", # ingérer les données du tableau de référence
+  "haven", # ingérer/sauvegarder des fichiers Stata
+  "htmltools" # créer un div pour chaque tableau imbriqué
+)
+
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
 # globalement
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -127,7 +140,9 @@ packages_requis <- c(
   pour_01_obtenir,
   # 02 - fusionner
   pour_fct_fusionner,
-  pour_02_fusionner_donnees
+  pour_02_fusionner_donnees,
+  # 05 - suivre
+  pour_05_suivre
 ) |>
 unique()
 

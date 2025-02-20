@@ -1,0 +1,265 @@
+---
+format: html
+toc: true
+toc-depth: 3
+lang: fr
+embed-resources: true
+execute:
+  echo: false
+  error: false
+  warning: false
+---
+
+```{r}
+#| label: fournir une traduction de l'interface des tableaux reactable
+
+# reactable UI text
+reactable_fr <- reactable::reactableLang(
+  searchPlaceholder = "Rechercher",
+  searchLabel = "Rechercher",
+  noData = "Aucune ligne retrouvée",
+  pageNext = "Suivant",
+  pagePrevious = "Précédent",
+  pageNumbers = "{page} de {pages}",
+  pageInfo = "Lignes {rowStart} à {rowEnd} de {rows} lignes"
+)
+```
+
+## Exhaustivité des données
+
+### Nombre de marchés par strate
+
+```{r}
+#| label: nombre de marchés par strate
+
+# ingérer les données
+marches_df <- here::here("02_fusionner", "donnees", "marches.dta") |>
+  haven::read_dta()
+
+# extraire les étiquettes de valeur pour la strate
+strates_lbls <- labelled::get_value_labels(marches_df$marche_strate)
+
+# créer un tableau des strates
+strates_df <- tibble::tibble(marche_strate = strates_lbls)
+
+# compter le nombre de marchés (distincts) par strate
+marches_par_strate <- marches_df |>
+  dplyr::distinct(marche_strate, marche_nom) |>
+  dplyr::group_by(marche_strate) |>
+	dplyr::summarise(n = dplyr::n()) |>
+	dplyr::ungroup()
+
+# composer un tableau de marchés par strate
+marches_par_strate_df <- strates_df |>
+  dplyr::left_join(marches_par_strate, by = "marche_strate") |>
+  dplyr::mutate(marche_strate = labelled::to_character(marche_strate))
+
+marches_par_strate_tbl <- reactable::reactable(
+  data = marches_par_strate_df,
+  columns = list(
+    marche_strate = reactable::colDef(
+      header = "Strate"
+    ),
+    n = reactable::colDef(
+      header = "Marchés",
+      na = "&mdash;",
+      html = TRUE
+      # TODO : figure out why code doesn't work
+      # docs: `https://glin.github.io/reactable/articles/conditional-styling.html#cell-styling`
+      # model: `https://glin.github.io/reactable/articles/examples.html#conditional-styling`
+      # ,
+      # style = function(value) {
+      #   if (is.na(value)) {
+      #     color <- "white"
+      #   } else {
+
+      #     if (value < 3) {
+      #       color <- "#F9E3D6"
+      #     } else if (value > 3) {
+      #       color <- "#ffd699"
+      #     }
+
+      #   }
+      #   return(list(backgroundColor = color))
+      # }
+    )
+  ),
+  searchable = TRUE,
+  language = reactable_fr
+)
+
+marches_par_strate_tbl
+```
+
+### Nombre de relevés par marché enquêté
+
+```{r}
+#| label: nombre de relevés par marché
+
+# obtenir le chemin de la dernière version
+chemin_tableaux_dir <- fs::dir_ls(
+  path = here::here("01_obtenir", "01_donnees"),
+  regexp = "Lookup Tables$",
+  type = "directory",
+  recurse = TRUE
+)
+
+chemin_tableau_de_ref <- fs::dir_ls(
+  path = chemin_tableaux_dir,
+  type = "file"
+)
+
+tableau_ref <- chemin_tableau_de_ref |>
+	readr::read_tsv() |>
+	dplyr::rename(
+    produits__id = produit_code,
+    unites__id = unite_code,
+    tailles__id = taille_code
+  ) |>
+	dplyr::select(produits__id, unites__id, tailles__id)
+
+marches_id_df <- marches_df |>
+	dplyr::select(interview__id, interview__key, marche_strate, marche_nom)
+
+n_produit_unite_taille_par_entretien <- here::here("02_fusionner", "donnees", "tailles.dta") |>
+  haven::read_dta() |>
+  dplyr::filter(!unites__id %in% c(-96, -97, -98))
+
+marches_et_releves <- marches_id_df |>
+	dplyr::left_join(
+    y = n_produit_unite_taille_par_entretien,
+    by = c("interview__id", "interview__key")
+  )
+
+releves_par_marche <- marches_et_releves |>
+  # compter les observations par marche-produit-unité-taille
+	dplyr::count(marche_strate, marche_nom, produits__id, unites__id, tailles__id) |>
+  # simplifier le nom des identifiants
+  dplyr::rename_with(
+    .cols = dplyr::ends_with("__id"),
+    .fn = ~ stringr::str_replace(
+      string = .x,
+      pattern = "s__id",
+      replacement = ""
+    )
+  ) |>
+  # créer une colonne nom et code pour les colonnes libellées
+	dplyr::mutate(
+    dplyr::across(
+      .cols = c(marche_strate, produit, unite, taille),
+      .fns = list(
+        nom = ~ labelled::to_character(.x),
+        code = ~ labelled::remove_labels(.x)
+      ),
+      .names = "{.col}_{.fn}"
+    )
+  ) |>
+	labelled::remove_var_label() |>
+	# haven::zap_formats() |>
+	dplyr::select(
+    marche_strate_code, marche_strate_nom, marche_nom,
+    produit_code, produit_nom,
+    unite_code, unite_nom,
+    taille_code, taille_nom
+  )
+
+n_releves_par_marche <- releves_par_marche |>
+	dplyr::group_by(
+    marche_strate_code, marche_strate_nom, marche_nom,
+    produit_code, produit_nom,
+    unite_code, unite_nom,
+    taille_code, taille_nom
+  ) |>
+	dplyr::summarise(
+    n_releves = dplyr::n()
+  ) |>
+	dplyr::ungroup()
+
+marches_releves_sommaire <- marches_et_releves |>
+	dplyr::group_by(marche_strate, marche_nom) |>
+	dplyr::summarise(
+    n_produits = dplyr::n_distinct(produits__id),
+    n_releves = dplyr::n()
+  ) |>
+	dplyr::ungroup() |>
+	dplyr::mutate(avg_releves_par_produit = n_releves / n_produits) |>
+  dplyr::mutate(
+    marche_strate_nom = labelled::to_character(marche_strate),
+    marche_strate_code = labelled::remove_labels(marche_strate)
+  ) |>
+  labelled::remove_var_label() |>
+	dplyr::select(
+    marche_strate_code, marche_strate_nom, marche_nom,
+    n_produits, avg_releves_par_produit
+  )
+
+marches_n_releves <- reactable::reactable(
+  data = marches_releves_sommaire,
+  columns = list(
+    marche_strate_nom = reactable::colDef(
+      header = "Strate",
+      show = TRUE
+    ),
+    marche_strate_code = reactable::colDef(show = FALSE),
+    marche_nom = reactable::colDef(
+      header = "Marché",
+      show = TRUE
+    ),
+    n_produits = reactable::colDef(
+      header = "Produits retrouvés",
+      show = TRUE
+    ),
+    avg_releves_par_produit = reactable::colDef(
+      header = "Relevés moyens par produit",
+      format = reactable::colFormat(digits = 2),
+      show = TRUE
+    )
+  ),
+  details = function(index) {
+
+    # créer une base pour la ligne en cours
+    releves_df <- n_releves_par_marche[
+      n_releves_par_marche$marche_strate_code == marches_releves_sommaire$marche_strate_code[index] &
+      n_releves_par_marche$marche_nom ==  marches_releves_sommaire$marche_nom[index]
+      ,
+    ]
+
+    # mettre le sous-tableau dans un div
+    htmltools::div(
+      style = "padding: 1rem; margin-left: 0.75rem;",
+      reactable::reactable(
+        data = releves_df,
+        defaultColDef = reactable::colDef(show = FALSE),
+        columns = list(
+          # marche_strate_code = reactable::colDef(show = FALSE),
+          # marche_strate_nom = reactable::colDef(show = FALSE),
+          # marche_nom = reactable::colDef(show = FALSE),
+          produit_nom = reactable::colDef(
+            header = "Produit",
+            show = TRUE
+          ),
+          unite_nom = reactable::colDef(
+            header = "Unité",
+            show = TRUE
+          ),
+          taille_nom = reactable::colDef(
+            header = "Taille",
+            show = TRUE
+          ),
+          n_releves = reactable::colDef(
+            header = "Relevés",
+            show = TRUE
+          )
+        ),
+        searchable = TRUE,
+        language = reactable_fr
+      )
+    )
+
+  },
+  searchable = TRUE,
+  language = reactable_fr
+)
+
+marches_n_releves
+```
