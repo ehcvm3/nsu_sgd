@@ -85,6 +85,7 @@ chemin_derniere_version <- obtenir_chemin_der_version(
 )
 
 # obtenir le chemin des données du questionnaire
+# décomprimant le contenu du questionnaire par la même occasion
 chemins <- obtenir_chemins_qnr(dir = chemin_derniere_version)
 
 # ingérer les données du questionnarie afin de les exploiter par la suite
