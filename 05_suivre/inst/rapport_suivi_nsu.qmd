@@ -25,7 +25,7 @@ reactable_fr <- reactable::reactableLang(
 )
 ```
 
-## Exhaustivité des données
+## Exhaustivité
 
 ### Nombre de marchés par strate
 
