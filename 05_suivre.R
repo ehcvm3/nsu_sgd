@@ -83,7 +83,13 @@ tryCatch(
 )
 
 # créer le document in situ
-quarto::quarto_render(input = chemin_rapport_modele)
+quarto::quarto_render(
+  input = chemin_rapport_modele,
+  execute_params = list(
+    serveur = serveur,
+    espace_travail = espace_travail
+  )
+)
 
 # déplacer le document vers le dossier de sortie
 fs::file_move(

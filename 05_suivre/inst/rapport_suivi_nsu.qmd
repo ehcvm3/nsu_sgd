@@ -8,6 +8,9 @@ execute:
   echo: false
   error: false
   warning: false
+params:
+  serveur: ""
+  espace_travail: ""
 ---
 
 ```{r}
@@ -262,4 +265,179 @@ marches_n_releves <- reactable::reactable(
 )
 
 marches_n_releves
+```
+
+## Vraisemblance
+
+```{r}
+#| label: créer bases pour rechercher les points aberrants
+
+# composer une base d'observations de prix et de poids avec les identifiants
+mesures_poids_prix <- n_produit_unite_taille_par_entretien |>
+	dplyr::select(
+    interview__id, interview__key,
+    produits__id, unites__id, tailles__id,
+    q108_poids, q108_prix
+  )
+
+# créer une base de seuils
+# pour chaque groupe de plus de 3 observations:
+# calculer la médiate et l'écart absolu médian
+# créer les seuils inférieurs et supérieurs de 2 écarts de la médiane
+seuiles_poids_prix <- mesures_poids_prix |>
+  dplyr::rename_with(
+    .cols = c(q108_poids, q108_prix),
+    .fn = ~ stringr::str_replace(
+      string = .x,
+      pattern = "q108_",
+      replacement = ""
+    )
+  ) |>
+	dplyr::group_by(produits__id, unites__id, tailles__id) |>
+	dplyr::summarise(
+    n_obs = dplyr::n(),
+    dplyr::across(
+      .cols = c(poids, prix),
+      .fns = list(
+        med = ~ stats::median(.x, na.rm = TRUE),
+        mad = ~ stats::mad(.x, na.rm = TRUE)
+      ),
+      .names = "{.fn}_{.col}"
+    )
+  ) |>
+  dplyr::ungroup() |>
+	dplyr::filter(n_obs > 3) |>
+	dplyr::mutate(
+    # poids
+    seuil_superieur_poids = med_poids + (2*mad_poids),
+    seuil_inferieur_poids = med_poids - (2*mad_poids),
+    # prix
+    seuil_superieur_prix = med_prix + (2*mad_prix),
+    seuil_inferieur_prix = med_prix - (2*mad_prix)
+  )
+
+# joindre les seuils aux observations
+mesures_plus_seuils <- mesures_poids_prix |>
+	dplyr::left_join(
+    y = seuiles_poids_prix,
+    by = dplyr::join_by(produits__id, unites__id, tailles__id)
+  )
+
+```
+
+```{r}
+#| label: composer l'URL common pour le lien vers les entretiens
+
+url_base <- httr::modify_url(
+  url = params$serveur,
+  path = fs::path(params$espace_travail, "Interview", "Review")
+)
+
+```
+
+### Poids
+
+```{r}
+#| label: poids invraisemblables
+
+poids_aberrants <- mesures_plus_seuils |>
+	dplyr::filter(!is.na(med_poids)) |>
+	dplyr::filter(
+    !dplyr::between(
+      x = q108_poids,
+      left = seuil_inferieur_poids,
+      right = seuil_superieur_poids
+    )
+  ) |>
+  dplyr::mutate(
+    dplyr::across(
+      .cols = c(produits__id, unites__id, tailles__id),
+      .fns = ~ labelled::to_character(.x, levels = "prefixed")
+    ),
+    raison = glue::glue("Le poids ({q108_poids}) n'est pas dans l'intervalle [ {seuil_inferieur_poids} , {seuil_superieur_poids} ], de 2 écarts absolus médians par rapport à la médiane ({med_poids}), calculée avec {n_obs} observations"),
+    lien_entretien = glue::glue("{url_base}/{interview__id}"),
+    interview__key = glue::glue("<a href='{lien_entretien}'>{interview__key}</a>")
+  ) |>
+	dplyr::select(
+    interview__key,
+    produits__id, unites__id, tailles__id,
+    raison
+  )
+
+poids_aberrants_tbl <- reactable::reactable(
+  data = poids_aberrants,
+  columns = list(
+    interview__key = reactable::colDef(
+      header = "Entretien",
+      maxWidth = 125,
+      html = TRUE
+    ),
+    produits__id = reactable::colDef(header = "Produit"),
+    unites__id = reactable::colDef(header = "Unité"),
+    tailles__id = reactable::colDef(header = "Taille"),
+    raison = reactable::colDef(
+      header = "Problème",
+      minWidth = 250
+    )
+  ),
+  searchable = TRUE,
+  language = reactable_fr
+)
+
+poids_aberrants_tbl
+
+```
+
+### Prix
+
+
+```{r}
+#| label: prix invraisemblables
+
+prix_aberrants <- mesures_plus_seuils |>
+	dplyr::filter(!is.na(med_prix)) |>
+	dplyr::filter(
+    !dplyr::between(
+      x = q108_prix,
+      left = seuil_inferieur_prix,
+      right = seuil_superieur_prix
+    )
+  ) |>
+  dplyr::mutate(
+    dplyr::across(
+      .cols = c(produits__id, unites__id, tailles__id),
+      .fns = ~ labelled::to_character(.x, levels = "prefixed")
+    ),
+    raison = glue::glue("Le prix ({q108_prix}) n'est pas dans l'intervalle [ {seuil_inferieur_prix} , {seuil_superieur_prix} ], de 2 écarts absolus médians par rapport à la médiane ({med_prix}), calculée avec {n_obs} observations"),
+    lien_entretien = glue::glue("{url_base}/{interview__id}"),
+    interview__key = glue::glue("<a href='{lien_entretien}'>{interview__key}</a>")
+  ) |>
+	dplyr::select(
+    interview__key,
+    produits__id, unites__id, tailles__id,
+    raison
+  )
+
+prix_aberrants_tbl <- reactable::reactable(
+  data = prix_aberrants,
+  columns = list(
+    interview__key = reactable::colDef(
+      header = "Entretien",
+      maxWidth = 125,
+      html = TRUE
+    ),
+    produits__id = reactable::colDef(header = "Produit"),
+    unites__id = reactable::colDef(header = "Unité"),
+    tailles__id = reactable::colDef(header = "Taille"),
+    raison = reactable::colDef(
+      header = "Problème",
+      minWidth = 250
+    )
+  ),
+  searchable = TRUE,
+  language = reactable_fr
+)
+
+prix_aberrants_tbl
+
 ```
