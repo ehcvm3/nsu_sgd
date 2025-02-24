@@ -100,6 +100,7 @@ reactable::reactable(
       html = TRUE
     )
   ),
+  searchable = TRUE,
   language = reactable_fr
 )
 
