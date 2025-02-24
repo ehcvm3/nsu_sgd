@@ -139,7 +139,11 @@ pour_05_suivre_images <- c(
   "glue", # construire un les chemins
   "reactable", # créer des tableaux interactifs
   "knitr", # inclure les images dans le tableau
-  "htmltools" # créer un tag pour l'image
+  "htmltools", # créer un tag pour l'image
+  "tibble", # transformer un vecteur un une base
+  "haven", # ingérer/sauvegarder des fichiers Stata
+  "labelled", # manipulation/application des étiquettes de variable et de valeur
+  "dplyr" # manipulation des données
 )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 

@@ -105,3 +105,94 @@ reactable::reactable(
 )
 
 ```
+
+## Unités "autre"
+
+
+```{r}
+#| label: construre le tableau du produit, description d'unité, et image
+
+# ingérer la base d'unités retrouvées pour en extraire :
+# - les étiquettes de valeur
+# - la description des unités "autre"
+unites <- fs::path(dir_donnees_fusionnees, "unites_retrouvees.dta") |>
+  haven::read_dta()
+
+# extraire les étiquettes de valeur des produits
+produits_lbls <- labelled::get_value_labels(unites$produits__id, prefixed = TRUE)
+
+images_autre <- dir_images_classees |>
+  # créer une base des images d'unités  "autre"
+	fs::dir_ls(
+    recurse = TRUE,
+    type = "file",
+    regexp = "--9[678]"
+  ) |>
+	tibble::enframe() |>
+	dplyr::select(path = value) |>
+  # extraire du nom : le produit, l'unité, et la clé de l'entretien
+	dplyr::mutate(
+    fichier = fs::path_file(path),
+    produit = stringr::str_extract(
+      string = fichier,
+      pattern = "(?<=__)(.+?)(?=--9)"
+    ),
+    produit = stringr::str_replace_all(
+      string = produit,
+      pattern = "_",
+      replacement = ""
+    ),
+    produit = as.numeric(produit),
+    unite = stringr::str_extract(
+      string = fichier,
+      pattern = "(?<=[0-9]{1,3}-)(-9[678])(?=_)"
+    ),
+    unite = as.numeric(unite),
+    interview__key = stringr::str_extract(
+      string = fichier,
+      pattern = "([0-9]{2}-[0-9]{2}-[0-9]{2}-[0-9]{2})(?=.jpg)"
+    )
+  ) |>
+  # joindre la base d'unités afin d'obtenir la description de l'unité
+  dplyr::left_join(
+    y = unites,
+    by = dplyr::join_by(
+      interview__key,
+      produit == produits__id, unite == unites__id
+    )
+  ) |>
+  # transformer les code de produit en texte qui inclut le code
+  labelled::set_value_labels(produit = produits_lbls) |>
+  dplyr::mutate(produit = labelled::to_character(produit)) |>
+  # ne retenir que les variables nécessaires
+	dplyr::select(produit, unite = nom_unite, path)
+
+```
+
+
+```{r}
+#| label: composer le tableau des unités autre
+
+reactable::reactable(
+  data = images_autre,
+  columns = list(
+    produit = reactable::colDef(
+      header = "Produit"
+    ),
+    unite = reactable::colDef(
+      header = "Unité"
+    ),
+    path = reactable::colDef(
+      header = "Image",
+      cell = function(value) {
+        image_src <- knitr::image_uri(value)
+        image <- htmltools::img(src = image_src, style = "height: 100px;")
+        return(image)
+      }  
+    )
+  ),
+  searchable = TRUE,
+  language = reactable_fr
+)
+
+```
