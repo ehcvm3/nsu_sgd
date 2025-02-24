@@ -118,7 +118,7 @@ pour_02_fusionner_donnees <- c(
   "labelled" # manipulation/application des étiquettes de variable et de valeur
 )
 
-pour_05_suivre <- c(
+pour_05_suivre_donnees <- c(
   "quarto", # vérifier l'installation de Quarto et créer de documents avec
   "cli", # afficher des message d'erreurs lisibles
   "fs", # opérations le système des fichiers
@@ -129,6 +129,17 @@ pour_05_suivre <- c(
   "readr", # ingérer les données du tableau de référence
   "haven", # ingérer/sauvegarder des fichiers Stata
   "htmltools" # créer un div pour chaque tableau imbriqué
+)
+
+pour_05_suivre_images <- c(
+  "quarto", # vérifier l'installation de Quarto et créer de documents avec
+  "cli", # afficher des message d'erreurs lisibles
+  "fs", # opérations le système des fichiers
+  "janitor", # identifier les doublons
+  "glue", # construire un les chemins
+  "reactable", # créer des tableaux interactifs
+  "knitr", # inclure les images dans le tableau
+  "htmltools" # créer un tag pour l'image
 )
 
 # - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - - 
@@ -142,7 +153,8 @@ packages_requis <- c(
   pour_fct_fusionner,
   pour_02_fusionner_donnees,
   # 05 - suivre
-  pour_05_suivre
+ pour_05_suivre_images,
+ pour_05_suivre_donnees
 ) |>
 unique()
 

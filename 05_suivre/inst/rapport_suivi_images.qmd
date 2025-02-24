@@ -1,0 +1,106 @@
+---
+format: html
+toc: true
+toc-depth: 3
+lang: fr
+embed-resources: true
+execute:
+  echo: false
+  error: false
+  warning: false
+---
+
+```{r}
+#| label: fournir une traduction de l'interface des tableaux reactable
+
+# reactable UI text
+reactable_fr <- reactable::reactableLang(
+  searchPlaceholder = "Rechercher",
+  searchLabel = "Rechercher",
+  noData = "Aucune ligne retrouvée",
+  pageNext = "Suivant",
+  pagePrevious = "Précédent",
+  pageNumbers = "{page} de {pages}",
+  pageInfo = "Lignes {rowStart} à {rowEnd} de {rows} lignes"
+)
+```
+
+```{r}
+#| label: définir les répertoires du projet
+source(here::here("R", "02_definir_repertoires.R"))
+```
+
+## Images recyclées
+
+```{r}
+#| label: obtenir les infos sur les images, identifier les fichiers identiques
+
+info_fichiers <- dir_images_classees |>
+  # créer une base d'info concernant toutes les images 
+	fs::dir_info(
+    recurse = TRUE,
+    type = "file",
+    regexp = "\\.jpg"
+  ) |>
+	dplyr::select(path) |>
+  # calculer la valeur md5sum
+	dplyr::mutate(hash = tools::md5sum(path))
+
+# infos2 <- dir_images_classees |>
+# 	fs::dir_ls(
+#     recurse = TRUE,
+#     type = "file",
+#     regexp = "\\.jpg"
+#   ) |>
+# 	tibble::enframe() |>
+# 	dplyr::select(path = value) |>
+#   # calculer la valeur md5sum
+# 	dplyr::mutate(hash = tools::md5sum(path))
+
+fichiers_identiques <- info_fichiers |>
+  # ne retenir que les doublons
+	janitor::get_dupes(hash) |>
+  # construire un lien
+  dplyr::mutate(
+    fichier_nom = fs::path_file(path),
+    fichier_lien = glue::glue("<a href = 'file://{path}'>{fichier_nom}</a>")
+  ) |>
+	dplyr::group_by(hash, dupe_count) |>
+	dplyr::summarise(
+    path_image = dplyr::first(path),
+    path_dups = glue::glue_collapse(fichier_lien, sep = "<br>")
+  ) |>
+  dplyr::ungroup()
+
+```
+
+```{r}
+#| label: composer et afficher le tableau d'images doublon
+
+
+reactable::reactable(
+  data = fichiers_identiques,
+  columns = list(
+    hash = reactable::colDef(
+      show = FALSE
+    ),
+    dupe_count = reactable::colDef(
+      header = "N. doublons"
+    ),
+    path_image = reactable::colDef(
+      header = "Image",
+      cell = function(value) {
+        image_src <- knitr::image_uri(value)
+        image <- htmltools::img(src = image_src, style = "height: 100px;")
+        return(image)
+      }
+    ),
+    path_dups = reactable::colDef(
+      header = "Fichiers identiques",
+      html = TRUE
+    )
+  ),
+  language = reactable_fr
+)
+
+```
