@@ -98,7 +98,7 @@ extraire_info_cle_images <- function(df) {
       # extraire les codes de produit et d'unité du nom de fichier
       code_produit = stringr::str_extract(
         string = nom_fichier,
-        pattern = "(?<=__)[0-9]{1,3}(?=-)"
+        pattern = "(?<=__)([0-9]{1,3})(?=-)"
       ),
       code_unite = dplyr::if_else(
         condition = stringr::str_detect(
@@ -107,11 +107,11 @@ extraire_info_cle_images <- function(df) {
         ),
         true = stringr::str_extract(
           string = nom_fichier,
-          pattern = "(?=-)-[0-9]{2}(?=.jpg)"
+          pattern = "(?=-)(-[0-9]{2})(?=.)"
         ),
         false = stringr::str_extract(
           string = nom_fichier,
-          pattern = "(?<=-)[0-9]{1,3}(?=.jpg)"
+          pattern = "(?<=-)([0-9]{1,3})(?=.)"
         )
       ),
       # convertir de type caractère à type numérique
