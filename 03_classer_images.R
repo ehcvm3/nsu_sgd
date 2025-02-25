@@ -50,11 +50,11 @@ chemin_derniere_version <- obtenir_chemin_der_version(
 chemins <- obtenir_chemins_qnr(dir = chemin_derniere_version)
 
 # ingérer les données du questionnarie afin de les exploiter par la suite
-nsu_qnr_df <- susometa::parse_questionnaire(path = chemin_qnr_json)
+nsu_qnr_df <- susometa::parse_questionnaire(path = chemins$chemin_qnr_json)
 
 # produits
 lbls_produits <- groupes |>
-	purrr::map(
+  purrr::map(
     .f = ~ susometa::get_answer_options(
       qnr_df = nsu_qnr_df,
       varname = !!rlang::sym(glue::glue("q100_{.x}"))
