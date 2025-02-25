@@ -500,6 +500,10 @@ mesures_poids_prix <- n_produit_unite_taille_par_entretien |>
     interview__id, interview__key,
     produits__id, unites__id, tailles__id,
     q108_poids, q108_prix
+  ) |>
+	dplyr::left_join(
+    y = dplyr::select(marches_df, interview__id, marche_strate),
+    by = "interview__id"
   )
 
 # créer une base de seuils
@@ -515,7 +519,7 @@ seuiles_poids_prix <- mesures_poids_prix |>
       replacement = ""
     )
   ) |>
-	dplyr::group_by(produits__id, unites__id, tailles__id) |>
+	dplyr::group_by(marche_strate, produits__id, unites__id, tailles__id) |>
 	dplyr::summarise(
     n_obs = dplyr::n(),
     dplyr::across(
