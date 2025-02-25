@@ -74,7 +74,9 @@ RStudio est sollicité pour deux raisons :
 
 ### Paramétrage
 
-Avant de faire autre chose, fournir les détails de connexion dans `_details_serveur.R`. Ces informations permettront ces programme d'interagir avec le serveur pour votre compte.
+Sur votre serveur SuSo, créer un compte API (procédure [ici](https://docs.mysurvey.solutions/headquarters/accounts/teams-and-roles-tab-creating-user-accounts/)) et lui donner accès à l'espace de travail qui héberge le questionnaire NSU (procédure [ici](https://docs.mysurvey.solutions/headquarters/accounts/adding-users-to-workspaces/)).
+
+Avant de lancer le programme, fournir les détails de connexion dans `_details_serveur.R`. Ces informations permettront ces programme d'interagir avec le serveur pour votre compte à travers l'utilisateur API.
 
 ### Utilisation régulière
 
