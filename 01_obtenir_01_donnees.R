@@ -49,7 +49,7 @@ susoflows::download_matching(
   server = serveur,
   workspace = espace_travail,
   user = utilisateur,
-  password = mot_de_passe,
+  password = mot_de_passe
 )
 
 # ------------------------------------------------------------------------------
