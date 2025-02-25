@@ -87,6 +87,7 @@ marches_par_strate_tbl <- reactable::reactable(
       # }
     )
   ),
+  striped = TRUE,
   searchable = TRUE,
   language = reactable_fr
 )
@@ -260,6 +261,7 @@ marches_n_releves <- reactable::reactable(
     )
 
   },
+  striped = TRUE,
   searchable = TRUE,
   language = reactable_fr
 )
@@ -434,6 +436,7 @@ prix_aberrants_tbl <- reactable::reactable(
       minWidth = 250
     )
   ),
+  striped = TRUE,
   searchable = TRUE,
   language = reactable_fr
 )
