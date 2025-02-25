@@ -54,7 +54,7 @@ if (length(chemins_images_classees) == 0) {
     message = c(
       "x" = "Aucune image classée retrouvée.",
       "i" = "Veuillez d'abord classer les images",
-      "i" = "Pour ce faire, lancer {.file 03_fusionner_donnees.R}"
+      "i" = "Pour ce faire, lancer {.file 03_classer_images.R}"
     )
   )
 
