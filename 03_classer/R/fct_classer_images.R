@@ -171,7 +171,7 @@ composer_chemins_cible <- function(
       by = c("interview__id", "interview__key")
     ) |>
     # exclure les observations sans photo
-    dplyr::filter(photo_deja == 2) |>
+    dplyr::filter(!q109 %in% c(NA_character_, "")) |>
     # ne retenir que les combinaisons distinctes de strate-produit-unité
     dplyr::distinct(marche_strate, produits__id, unites__id) |>
     # appliquer les étiquettes de valeur extraites du questionnaire JSON
