@@ -13,10 +13,13 @@ if (!base::require("here", quietly = TRUE)) {
 source(here::here("R", "01_installer_packages_requis.R"))
 
 # ------------------------------------------------------------------------------
-# définir les répertoires
+# charger les définitions et paramètres
 # ------------------------------------------------------------------------------
 
+# répertoires
 source(here::here("R", "02_definir_repertoires.R"))
+# détails de connexion au serveur
+source(here::here("_details_serveur.R"))
 
 # ------------------------------------------------------------------------------
 # confirmer que Quarto est installé
