@@ -88,3 +88,40 @@ if (credentials_valid == FALSE) {
   )
 
 }
+
+# ------------------------------------------------------------------------------
+# Confirmer que le(s) questionnaire(s) cible existe(nt)
+# ------------------------------------------------------------------------------
+
+tryCatch(
+  expr = susoflows::find_matching_qnrs(
+    matches = nsu_qnr_expr,
+    server = serveur,
+    workspace = espace_travail,
+    user = utilisateur,
+    password = mot_de_passe
+  ),
+  warning = function(cnd) {
+
+    qnrs <- susoapi::get_questionnaires(
+      server = serveur,
+      workspace = espace_travail,
+      user = utilisateur,
+      password = mot_de_passe
+    ) |>
+    dplyr::mutate(qnr_title = glue::glue("{title} (version {version})")) |>
+    dplyr::pull(qnr_title) |>
+    glue::glue_collapse(sep = ", ")
+
+    cli::cli_abort(
+      message = c(
+        "x" = "Aucun questionnaire correspondant retrouvé",
+        "i" = "Veuillez reprendre la valeur de {.code nsu_qnr_expr}",
+        "i" = "Voici les questionnaires dans l'espace de travail cible : {qnrs}"
+      ),
+      call = rlang::caller_env()
+    )
+
+  }
+
+)
