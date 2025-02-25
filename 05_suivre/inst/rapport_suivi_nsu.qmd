@@ -596,6 +596,7 @@ poids_aberrants_tbl <- reactable::reactable(
       minWidth = 250
     )
   ),
+  striped = TRUE,
   searchable = TRUE,
   language = reactable_fr
 )
