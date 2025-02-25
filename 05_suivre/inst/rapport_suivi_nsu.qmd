@@ -14,6 +14,16 @@ params:
 ---
 
 ```{r}
+#| label: composer l'URL common pour le lien vers les entretiens
+
+url_base <- httr::modify_url(
+  url = params$serveur,
+  path = fs::path(params$espace_travail, "Interview", "Review")
+)
+
+```
+
+```{r}
 #| label: fournir une traduction de l'interface des tableaux reactable
 
 # reactable UI text
@@ -323,16 +333,6 @@ mesures_plus_seuils <- mesures_poids_prix |>
 	dplyr::left_join(
     y = seuiles_poids_prix,
     by = dplyr::join_by(produits__id, unites__id, tailles__id)
-  )
-
-```
-
-```{r}
-#| label: composer l'URL common pour le lien vers les entretiens
-
-url_base <- httr::modify_url(
-  url = params$serveur,
-  path = fs::path(params$espace_travail, "Interview", "Review")
 )
 
 ```
