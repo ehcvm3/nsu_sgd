@@ -135,8 +135,10 @@ tableau_ref <- chemin_tableau_de_ref |>
 marches_id_df <- marches_df |>
 	dplyr::select(interview__id, interview__key, marche_strate, marche_nom)
 
-n_produit_unite_taille_par_entretien <- here::here("02_fusionner", "donnees", "tailles.dta") |>
-  haven::read_dta() |>
+mesures_df <- here::here("02_fusionner", "donnees", "tailles.dta") |>
+  haven::read_dta()
+
+n_produit_unite_taille_par_entretien <- mesures_df |>
   dplyr::filter(!unites__id %in% c(-96, -97, -98))
 
 marches_et_releves <- marches_id_df |>
@@ -279,6 +281,214 @@ marches_n_releves <- reactable::reactable(
 marches_n_releves
 ```
 
+## Cohérence
+
+```{r}
+#| label: préparation des données
+
+mesures_avec_marches <- marches_id_df |>
+	dplyr::left_join(
+    y = mesures_df,
+    by = c("interview__id", "interview__key")
+  )
+
+```
+
+```{r}
+#| label: créer une fonction pour faire ressortir les problèmes
+
+identifier_mesures_inconsistentes <- function(
+  df,
+  var
+) {
+
+  df_prob <- df |>
+    dplyr::filter(!tailles__id %in% c(0, -96, -97)) |>
+    # also product
+    dplyr::arrange(interview__id, produits__id, unites__id, tailles__id) |>
+    dplyr::group_by(
+      interview__id, interview__key,
+      marche_strate, marche_nom,
+      produits__id, unites__id
+    ) |>
+    dplyr::mutate(
+      consistent = dplyr::if_else(
+        condition = dplyr::row_number() != 1,
+        true = {{var}} > dplyr::lag({{var}}, n = 1L),
+        false = TRUE,
+        missing = FALSE
+      )
+    ) |>
+    dplyr::ungroup() |>
+    dplyr::filter(consistent == FALSE) |>
+    dplyr::select(
+      interview__id, interview__key,
+      produits__id, unites__id
+    )
+
+  df_unites_avec_prob <- df |>
+    dplyr::semi_join(
+      y = df_prob,
+      by = dplyr::join_by(
+        interview__id, interview__key,
+        produits__id, unites__id
+      )
+    ) |>
+    dplyr::mutate(
+      dplyr::across(
+        .cols = c(marche_strate, produits__id, unites__id, tailles__id),
+        .fns = ~ labelled::to_character(.x, levels = "prefixed")
+      ),
+      lien_entretien = glue::glue("{url_base}/{interview__id}"),
+      interview__key = glue::glue("<a href='{lien_entretien}'>{interview__key}</a>")
+    ) |>
+    dplyr::select(
+      interview__key,
+      marche_strate, marche_nom,
+      produits__id, unites__id,
+      produits__id, unites__id, tailles__id,
+      {{var}}
+    )
+
+  return(df_unites_avec_prob)
+
+}
+
+```
+
+### Poids
+
+```{r}
+#| label: créer les données du tableau d'inconsistences du poids
+
+inconsistences_poids <- identifier_mesures_inconsistentes(
+  df = mesures_avec_marches,
+  var = q108_poids
+)
+
+marches_avec_inconsistences_poids <- inconsistences_poids |>
+	dplyr::group_by(marche_strate, marche_nom) |>
+	dplyr::summarise(
+    n_unites = dplyr::n_distinct(unites__id)
+  ) |>
+	dplyr::ungroup()
+
+```
+
+```{r}
+#| label: composer le tableau d'inconsistences du poids
+
+mesures_poids_inconsistentes <- reactable::reactable(
+  data = marches_avec_inconsistences_poids,
+  columns = list(
+    marche_strate = reactable::colDef(header = "Strate"),
+    marche_nom = reactable::colDef(header = "Marché"),
+    n_unites = reactable::colDef(header = "N. unités à problème")
+  ),
+  details = function(index) {
+
+    # extraire les observations relatives à l'indice en cours
+    inconsistences_poids_marche <- inconsistences_poids[
+      inconsistences_poids$marche_strate == marches_avec_inconsistences_poids$marche_strate[index] &
+      inconsistences_poids$marche_nom == marches_avec_inconsistences_poids$marche_nom[index],
+    ]
+
+    # composer le tableau imbriqué avec les détails sur les mesures
+    htmltools::div(
+      style = "padding: 1rem; margin-left: 0.75rem;",
+      reactable::reactable(
+        data = inconsistences_poids_marche,
+        columns = list(
+          interview__key = reactable::colDef(
+            header = "Entretien",
+            html = TRUE
+          ),
+          marche_strate = reactable::colDef(show = FALSE),
+          marche_nom = reactable::colDef(show = FALSE),
+          produits__id = reactable::colDef(header = "Produit"),
+          unites__id = reactable::colDef(header = "Unité"),
+          tailles__id = reactable::colDef(header = "Taille"),
+          q108_poids = reactable::colDef(header = "Poids")
+        ),
+        striped = TRUE,
+        language = reactable_fr
+      )
+    )
+  },
+  striped = TRUE,
+  language = reactable_fr
+)
+
+mesures_poids_inconsistentes
+```
+
+### Prix
+
+```{r}
+#| label: créer les données du tableau d'inconsistences du prix
+
+inconsistences_prix <- identifier_mesures_inconsistentes(
+  df = mesures_avec_marches,
+  var = q108_prix
+)
+
+marches_avec_inconsistences_prix <- inconsistences_prix |>
+	dplyr::group_by(marche_strate, marche_nom) |>
+	dplyr::summarise(
+    n_unites = dplyr::n_distinct(unites__id)
+  ) |>
+	dplyr::ungroup()
+
+```
+
+```{r}
+#| label: composer le tableau d'inconsistences du prix
+
+mesures_prix_inconsistentes <- reactable::reactable(
+  data = marches_avec_inconsistences_prix,
+  columns = list(
+    marche_strate = reactable::colDef(header = "Strate"),
+    marche_nom = reactable::colDef(header = "Marché"),
+    n_unites = reactable::colDef(header = "N. unités à problème")
+  ),
+  details = function(index) {
+
+    # extraire les observations relatives à l'indice en cours
+    inconsistences_prix_marche <- inconsistences_prix[
+      inconsistences_prix$marche_strate == marches_avec_inconsistences_prix$marche_strate[index] &
+      inconsistences_prix$marche_nom == marches_avec_inconsistences_prix$marche_nom[index],
+    ]
+
+    # composer le tableau imbriqué avec les détails sur les mesures
+    htmltools::div(
+      style = "padding: 1rem; margin-left: 0.75rem;",
+      reactable::reactable(
+        data = inconsistences_prix_marche,
+        columns = list(
+          interview__key = reactable::colDef(
+            header = "Entretien",
+            html = TRUE
+          ),
+          marche_strate = reactable::colDef(show = FALSE),
+          marche_nom = reactable::colDef(show = FALSE),
+          produits__id = reactable::colDef(header = "Produit"),
+          unites__id = reactable::colDef(header = "Unité"),
+          tailles__id = reactable::colDef(header = "Taille"),
+          q108_prix = reactable::colDef(header = "Prix")
+        ),
+        striped = TRUE,
+        language = reactable_fr
+      )
+    )
+  },
+  striped = TRUE,
+  language = reactable_fr
+)
+
+mesures_prix_inconsistentes
+
+```
+
 ## Vraisemblance
 
 ```{r}
@@ -333,7 +543,7 @@ mesures_plus_seuils <- mesures_poids_prix |>
 	dplyr::left_join(
     y = seuiles_poids_prix,
     by = dplyr::join_by(produits__id, unites__id, tailles__id)
-)
+  )
 
 ```
 
