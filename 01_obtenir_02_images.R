@@ -3,14 +3,10 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# installer les packages nécessaires
+# confirmer que les outils de système sont présents
 # ------------------------------------------------------------------------------
 
-# installer `{here}` si le package est absent
-if (!base::require("here", quietly = TRUE)) {
-  install.packages("here")
-}
-source(here::here("R", "01_installer_packages_requis.R"))
+source(here::here("R", "01_confirmer_outils_systeme.R"))
 
 # ------------------------------------------------------------------------------
 # définir les répertoires

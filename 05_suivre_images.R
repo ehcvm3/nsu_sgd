@@ -3,39 +3,16 @@
 # ==============================================================================
 
 # ------------------------------------------------------------------------------
-# installer les packages nécessaires
+# confirmer que les outils de système sont présents
 # ------------------------------------------------------------------------------
 
-# installer `{here}` si le package est absent
-if (!base::require("here", quietly = TRUE)) {
-  install.packages("here")
-}
-source(here::here("R", "01_installer_packages_requis.R"))
+source(here::here("R", "01_confirmer_outils_systeme.R"))
 
 # ------------------------------------------------------------------------------
 # définir les répertoires
 # ------------------------------------------------------------------------------
 
 source(here::here("R", "02_definir_repertoires.R"))
-
-# ------------------------------------------------------------------------------
-# confirmer que Quarto est installé
-# ------------------------------------------------------------------------------
-
-if (is.null(quarto::quarto_path())) {
-
-  url_quarto <- "https://quarto.org/docs/get-started/"
-
-  cli::cli_abort(
-    message = c(
-      "x" = "Quarto est introuvable. Veuillez l'installer.",
-      "i" = "Pour créer une sortie, le programme a besoin de Quarto.",
-      "i" = "Pour l'installer, suivre les instructions ici : ",
-      "{.url {url_quarto}}"
-    )
-  )
-
-}
 
 # ------------------------------------------------------------------------------
 # confirmer que les images classées sont présentes
