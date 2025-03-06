@@ -531,44 +531,6 @@
       "Maintainer": "Gábor Csárdi <csardi.gabor@gmail.com>",
       "Repository": "CRAN"
     },
-    "crul": {
-      "Package": "crul",
-      "Version": "1.5.0",
-      "Source": "Repository",
-      "Title": "HTTP Client",
-      "Description": "A simple HTTP client, with tools for making HTTP requests, and mocking HTTP requests. The package is built on R6, and takes inspiration from Ruby's 'faraday' gem (<https://rubygems.org/gems/faraday>). The package name is a play on curl, the widely used command line tool for HTTP, and this package is built on top of the R package 'curl', an interface to 'libcurl' (<https://curl.se/libcurl/>).",
-      "License": "MIT + file LICENSE",
-      "Authors@R": "c( person(\"Scott\", \"Chamberlain\", role = c(\"aut\", \"cre\"), email = \"myrmecocystus@gmail.com\", comment = c(ORCID = \"0000-0003-1444-9135\")) )",
-      "URL": "https://docs.ropensci.org/crul/, https://github.com/ropensci/crul, https://books.ropensci.org/http-testing/",
-      "BugReports": "https://github.com/ropensci/crul/issues",
-      "Encoding": "UTF-8",
-      "Language": "en-US",
-      "Imports": [
-        "curl (>= 3.3)",
-        "R6 (>= 2.2.0)",
-        "urltools (>= 1.6.0)",
-        "httpcode (>= 0.2.0)",
-        "jsonlite",
-        "mime"
-      ],
-      "Suggests": [
-        "testthat",
-        "roxygen2 (>= 7.1.1)",
-        "fauxpas (>= 0.1.0)",
-        "webmockr (>= 0.1.0)",
-        "knitr",
-        "rmarkdown"
-      ],
-      "VignetteBuilder": "knitr",
-      "RoxygenNote": "7.3.2",
-      "X-schema.org-applicationCategory": "Web",
-      "X-schema.org-keywords": "http, https, API, web-services, curl, download, libcurl, async, mocking, caching",
-      "X-schema.org-isPartOf": "https://ropensci.org",
-      "NeedsCompilation": "no",
-      "Author": "Scott Chamberlain [aut, cre] (<https://orcid.org/0000-0003-1444-9135>)",
-      "Maintainer": "Scott Chamberlain <myrmecocystus@gmail.com>",
-      "Repository": "CRAN"
-    },
     "curl": {
       "Package": "curl",
       "Version": "6.2.1",
@@ -969,37 +931,6 @@
       "Maintainer": "Hadley Wickham <hadley@rstudio.com>",
       "Repository": "CRAN"
     },
-    "ghql": {
-      "Package": "ghql",
-      "Version": "0.1.0",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "General Purpose 'GraphQL' Client",
-      "Description": "A 'GraphQL' client, with an R6 interface for initializing a connection to a 'GraphQL' instance, and methods for constructing queries, including fragments and parameterized queries. Queries are checked with the 'libgraphqlparser' C++ parser via the 'gaphql' package.",
-      "Authors@R": "c(person(\"Scott\", \"Chamberlain\", role = c(\"aut\", \"cre\"), email = \"myrmecocystus@gmail.com\", comment = c(ORCID=\"0000-0003-1444-9135\")))",
-      "License": "MIT + file LICENSE",
-      "URL": "https://github.com/ropensci/ghql (devel) https://docs.ropensci.org/ghql (docs)",
-      "BugReports": "https://github.com/ropensci/ghql/issues",
-      "Encoding": "UTF-8",
-      "Language": "en-US",
-      "Imports": [
-        "crul",
-        "jsonlite",
-        "R6",
-        "graphql"
-      ],
-      "Suggests": [
-        "testthat"
-      ],
-      "RoxygenNote": "7.0.2",
-      "X-schema.org-applicationCategory": "Web",
-      "X-schema.org-keywords": "http, API, web-services, curl, data, GraphQL",
-      "X-schema.org-isPartOf": "https://ropensci.org",
-      "NeedsCompilation": "no",
-      "Author": "Scott Chamberlain [aut, cre] (<https://orcid.org/0000-0003-1444-9135>)",
-      "Maintainer": "Scott Chamberlain <myrmecocystus@gmail.com>",
-      "Repository": "CRAN"
-    },
     "glue": {
       "Package": "glue",
       "Version": "1.8.0",
@@ -1039,34 +970,6 @@
       "NeedsCompilation": "yes",
       "Author": "Jim Hester [aut] (<https://orcid.org/0000-0002-2739-7082>), Jennifer Bryan [aut, cre] (<https://orcid.org/0000-0002-6983-2759>), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Jennifer Bryan <jenny@posit.co>",
-      "Repository": "CRAN"
-    },
-    "graphql": {
-      "Package": "graphql",
-      "Version": "1.5.2",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "A GraphQL Query Parser",
-      "Authors@R": "c( person(\"Jeroen\", \"Ooms\", , \"jeroenooms@gmail.com\", role = c(\"cre\", \"aut\")), person(\"Barret\", \"Schloerke\", , \"schloerke@gmail.com\", role = \"ctb\"), person(\"Scott\", \"Wolchok\", role = \"ctb\"), person(\"Facebook, Inc\", role = c(\"aut\",\"cph\"), comment = \"libgraphqlparser C++ library\"))",
-      "Description": "Bindings to the 'libgraphqlparser' C++ library. Parses GraphQL <https://graphql.org> syntax and exports the AST in JSON format.",
-      "License": "MIT + file LICENSE",
-      "Encoding": "UTF-8",
-      "URL": "https://docs.ropensci.org/graphql/ https://ropensci.r-universe.dev/graphql",
-      "BugReports": "https://github.com/ropensci/graphql/issues",
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "Imports": [
-        "Rcpp (>= 0.12.12)",
-        "jsonlite"
-      ],
-      "Suggests": [
-        "testthat"
-      ],
-      "RoxygenNote": "6.0.1",
-      "NeedsCompilation": "yes",
-      "Author": "Jeroen Ooms [cre, aut], Barret Schloerke [ctb], Scott Wolchok [ctb], Facebook, Inc [aut, cph] (libgraphqlparser C++ library)",
-      "Maintainer": "Jeroen Ooms <jeroenooms@gmail.com>",
       "Repository": "CRAN"
     },
     "haven": {
@@ -1295,27 +1198,6 @@
       "NeedsCompilation": "no",
       "Author": "Ramnath Vaidyanathan [aut, cph], Yihui Xie [aut], JJ Allaire [aut], Joe Cheng [aut], Carson Sievert [aut, cre] (<https://orcid.org/0000-0002-4958-2844>), Kenton Russell [aut, cph], Ellis Hughes [ctb], Posit Software, PBC [cph, fnd]",
       "Maintainer": "Carson Sievert <carson@posit.co>",
-      "Repository": "CRAN"
-    },
-    "httpcode": {
-      "Package": "httpcode",
-      "Version": "0.3.0",
-      "Source": "Repository",
-      "Title": "'HTTP' Status Code Helper",
-      "Description": "Find and explain the meaning of 'HTTP' status codes. Functions included for searching for codes by full or partial number, by message, and get appropriate dog and cat images for many status codes.",
-      "Authors@R": "person(\"Scott\", \"Chamberlain\", role = c(\"aut\",\"cre\"), email = \"myrmecocystus@gmail.com\",  comment = c(ORCID = \"0000-0003-1444-9135\"))",
-      "License": "MIT + file LICENSE",
-      "URL": "https://github.com/sckott/httpcode",
-      "BugReports": "https://github.com/sckott/httpcode/issues",
-      "Encoding": "UTF-8",
-      "Language": "en-US",
-      "Suggests": [
-        "testthat"
-      ],
-      "RoxygenNote": "7.1.0",
-      "NeedsCompilation": "no",
-      "Author": "Scott Chamberlain [aut, cre] (<https://orcid.org/0000-0003-1444-9135>)",
-      "Maintainer": "Scott Chamberlain <myrmecocystus@gmail.com>",
       "Repository": "CRAN"
     },
     "httpuv": {
@@ -2904,13 +2786,13 @@
     },
     "susoapi": {
       "Package": "susoapi",
-      "Version": "0.2.3",
+      "Version": "0.3.1",
       "Source": "GitHub",
       "Title": "Interface for Survey Solutions' APIs",
       "Authors@R": "person(given = \"Arthur\", family = \"Shaw\", role = c(\"aut\", \"cre\"), email = \"jashaw2002@gmail.com\")",
       "Description": "Provides a user-friendly interface for Survey Solutions RESTful and GraphQL APIs.",
       "License": "MIT + file LICENSE",
-      "URL": "https://github.com/arthur-shaw/susoapi",
+      "URL": "https://arthur-shaw.github.io/susoapi/, https://github.com/arthur-shaw/susoapi",
       "BugReports": "https://github.com/arthur-shaw/susoapi/issues",
       "Encoding": "UTF-8",
       "LazyData": "true",
@@ -2926,7 +2808,6 @@
         "assertthat",
         "curl",
         "fs",
-        "ghql",
         "glue",
         "rlang",
         "tibble",
@@ -2944,15 +2825,15 @@
       "Author": "Arthur Shaw [aut, cre]",
       "Maintainer": "Arthur Shaw <jashaw2002@gmail.com>",
       "RemoteType": "github",
-      "RemoteHost": "api.github.com",
       "RemoteUsername": "arthur-shaw",
       "RemoteRepo": "susoapi",
       "RemoteRef": "master",
-      "RemoteSha": "a94058cbcef60c26ccda86e0e21e495931d4167b"
+      "RemoteSha": "019e4f9f1b203920823e3cbbda15811c3b607a8e",
+      "RemoteHost": "api.github.com"
     },
     "susoflows": {
       "Package": "susoflows",
-      "Version": "0.2.0",
+      "Version": "0.2.1",
       "Source": "GitHub",
       "Title": "Executes common workflows with Survey Solutions' API",
       "Authors@R": "person(given = \"Arthur\", family = \"Shaw\", role = c(\"aut\", \"cre\"), email = \"jashaw2002@gmail.com\")",
@@ -2971,7 +2852,7 @@
         "purrr",
         "rlang",
         "stringr",
-        "susoapi (>= 0.2.0)",
+        "susoapi (>= 0.3.1)",
         "tibble",
         "zip"
       ],
@@ -2992,8 +2873,8 @@
       "RemoteHost": "api.github.com",
       "RemoteUsername": "arthur-shaw",
       "RemoteRepo": "susoflows",
-      "RemoteRef": "master",
-      "RemoteSha": "bdd63b9b5ab8a258bd32012a9f1bafd5af47d1f3",
+      "RemoteRef": "main",
+      "RemoteSha": "fc5b297d4b1d05e5bf4a153449522ca2528f14f5",
       "Remotes": "github::arthur-shaw/susoapi"
     },
     "susometa": {
@@ -3319,36 +3200,6 @@
       "Maintainer": "Yihui Xie <xie@yihui.name>",
       "Repository": "CRAN"
     },
-    "triebeard": {
-      "Package": "triebeard",
-      "Version": "0.4.1",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "'Radix' Trees in 'Rcpp'",
-      "Author": "Os Keyes [aut, cre], Drew Schmidt [aut], Yuuki Takano [cph]",
-      "Maintainer": "Os Keyes <ironholds@gmail.com>",
-      "Description": "'Radix trees', or 'tries', are key-value data structures optimised for efficient lookups, similar in purpose to hash tables. 'triebeard' provides an implementation of 'radix trees' for use in R programming and in developing packages with 'Rcpp'.",
-      "License": "MIT + file LICENSE",
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "Encoding": "UTF-8",
-      "Imports": [
-        "Rcpp"
-      ],
-      "RoxygenNote": "7.1.2",
-      "Suggests": [
-        "knitr",
-        "rmarkdown",
-        "testthat"
-      ],
-      "VignetteBuilder": "knitr",
-      "URL": "https://github.com/Ironholds/triebeard/",
-      "BugReports": "https://github.com/Ironholds/triebeard/issues",
-      "Date": "2023-03-04",
-      "NeedsCompilation": "yes",
-      "Repository": "CRAN"
-    },
     "tzdb": {
       "Package": "tzdb",
       "Version": "0.4.0",
@@ -3377,41 +3228,6 @@
       "NeedsCompilation": "yes",
       "Author": "Davis Vaughan [aut, cre], Howard Hinnant [cph] (Author of the included date library), Posit Software, PBC [cph, fnd]",
       "Maintainer": "Davis Vaughan <davis@posit.co>",
-      "Repository": "CRAN"
-    },
-    "urltools": {
-      "Package": "urltools",
-      "Version": "1.7.3",
-      "Source": "Repository",
-      "Type": "Package",
-      "Title": "Vectorised Tools for URL Handling and Parsing",
-      "Date": "2019-04-14",
-      "Author": "Os Keyes [aut, cre], Jay Jacobs [aut, cre], Drew Schmidt [aut], Mark Greenaway [ctb], Bob Rudis [ctb], Alex Pinto [ctb], Maryam Khezrzadeh [ctb], Peter Meilstrup [ctb], Adam M. Costello [cph], Jeff Bezanson [cph], Peter Meilstrup [ctb], Xueyuan Jiang [ctb]",
-      "Maintainer": "Os Keyes <ironholds@gmail.com>",
-      "Description": "A toolkit for all URL-handling needs, including encoding and decoding, parsing, parameter extraction and modification. All functions are designed to be both fast and entirely vectorised. It is intended to be useful for people dealing with web-related datasets, such as server-side logs, although may be useful for other situations involving large sets of URLs.",
-      "License": "MIT + file LICENSE",
-      "LazyData": "TRUE",
-      "LinkingTo": [
-        "Rcpp"
-      ],
-      "Imports": [
-        "Rcpp",
-        "methods",
-        "triebeard"
-      ],
-      "Suggests": [
-        "testthat",
-        "knitr"
-      ],
-      "URL": "https://github.com/Ironholds/urltools/",
-      "BugReports": "https://github.com/Ironholds/urltools/issues",
-      "VignetteBuilder": "knitr",
-      "RoxygenNote": "6.1.1",
-      "Encoding": "UTF-8",
-      "Depends": [
-        "R (>= 2.10)"
-      ],
-      "NeedsCompilation": "yes",
       "Repository": "CRAN"
     },
     "utf8": {
