@@ -90,8 +90,7 @@ reactable::reactable(
     path_image = reactable::colDef(
       header = "Image",
       cell = function(value) {
-        image_src <- knitr::image_uri(value)
-        image <- htmltools::img(src = image_src, style = "height: 100px;")
+        image <- htmltools::img(src = value, style = "height: 100px;")
         return(image)
       }
     ),
@@ -186,8 +185,7 @@ reactable::reactable(
     path = reactable::colDef(
       header = "Image",
       cell = function(value) {
-        image_src <- knitr::image_uri(value)
-        image <- htmltools::img(src = image_src, style = "height: 100px;")
+        image <- htmltools::img(src = value, style = "height: 100px;")
         return(image)
       }  
     )
