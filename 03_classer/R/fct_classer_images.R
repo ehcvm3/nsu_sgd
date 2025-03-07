@@ -215,14 +215,22 @@ composer_chemins_cible <- function(
 
 creer_chemins_source_et_cible <- function(
   df_chemins_source,
-  df_chemins_cible
+  df_chemins_cible,
+  chemin_df_marches
 ) {
 
+  df_marches <- haven::read_dta(file = chemin_df_marches)
+
   df_source_cible <- df_chemins_source |>
+    # ajouter des identifiants relatifs au marché d'origine de l'image
+    dplyr::left_join(
+      y = df_marches,
+      by = "interview__key"
+    ) |>
     # ajouter les répertoire de cible
     dplyr::left_join(
       y = df_chemins_cible,
-      by = c("code_produit", "code_unite")
+      by = c("marche_strate", "code_produit", "code_unite")
     ) |>
     dplyr::mutate(
       # ajouter la clé de l'entretien au nom de l'image afin de donner sa source

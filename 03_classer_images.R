@@ -95,7 +95,8 @@ df_chemins_cible <- composer_chemins_cible(
 
 df_chemins_source_cible <- creer_chemins_source_et_cible(
   df_chemins_source = infos_cle_images,
-  df_chemins_cible =  df_chemins_cible
+  df_chemins_cible =  df_chemins_cible,
+  chemin_df_marches = fs::path(dir_donnees_fusionnees, "marches.dta")
 )
 
 # ==============================================================================
