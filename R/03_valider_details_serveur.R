@@ -50,7 +50,7 @@ server_exists <- function(url) {
 }
 
 if (!server_exists(url = serveur)) {
-  stop(paste0("Server does not exist at address provided: ", serveur))
+  stop(paste0("Le serveur n'existe pas à l'adresse fournie : ", serveur))
 }
 
 # ------------------------------------------------------------------------------
