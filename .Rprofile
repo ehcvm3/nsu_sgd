@@ -41,3 +41,10 @@ source("R/01_confirmer_outils_systeme.R")
 # ==============================================================================
 
 source("renv/activate.R")
+
+# ==============================================================================
+# activer l'environnement du projet
+# ==============================================================================
+
+# restaurer sans demander l'avis de l'utilisateur
+renv::restore(prompt = FALSE)
