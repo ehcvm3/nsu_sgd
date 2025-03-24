@@ -17,6 +17,12 @@ if (pkgbuild::has_build_tools() == FALSE) {
     )
   )
 
+} else {
+  cli::cli_inform(
+    message = c(
+      "v" = "RTools retrouvé"
+    )
+  )
 }
 
 # ------------------------------------------------------------------------------
@@ -36,4 +42,10 @@ if (is.null(quarto::quarto_path())) {
     )
   )
 
+} else {
+  cli::cli_inform(
+    message = c(
+      "v" = "Quarto retrouvé"
+    )
+  )
 }
