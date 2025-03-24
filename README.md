@@ -94,3 +94,48 @@ Pour chaque action, exécuter le programme afférant :
 - **`03_classer_images.R`**. Reclasser les images: créer un nouveau système de répertoires, ajouter des informations dans le nom d'images, et mettre les images dans les nouveaux répertoires. Résultats dans : `03_classer/images`.
 - **`05_suivre_donnees.R`**. Créer un rapport l'exhaustivité, la cohérence, et la vraisemblance des données. Résultats dans : `05_suivre/rapport`.
 - **`05_suivre_images.R`**.  Créer un rapport sur la réutilisation d'image et d'image des unités "autre".  Résultats dans : `05_suivre/rapport`.
+
+### Dépanner
+
+En cas de problème :
+
+- Lire les messages d'erreur. Parfois, ils indiquent le problème et quelques pistes de solution.
+- Lire les problèmes fréquemment rencontrés ici-bas.
+- Contacter l'équipe de développement, en fournissant les étapes suivies et les messages d'erreur (e.g. captures d'écran)
+
+Voici quelques problèmes fréquemments rencontrés :
+
+- Serveur n'existe pas à l'adresse fourie
+- Impossible d'installer les packages
+- `curl::curl_fetch_memory() 
+
+#### Serveur n'existe pas à l'adresse fourie
+
+- **Problème** L'adresse fournie ne permet pas au programme de se connecter au site.
+- **Solution.** Vérifier l'adresse et/ ou la connexion. Par exemple:
+  - Voir si cette adresse amène au serveur lorsque mise dans un navigateur web
+  - Voir si le serveur est en ligne / joignable
+  - Confirmer que des règles du pare-feu n'empêche pas l'accès au serveur avec la connexion.
+
+#### Impossible d'installer les packages
+
+- **Problème.** Le programme cherche à installer, au niveau du projet, les packages requis. Or l'installation peut échouer pour plusieurs raisons.
+- **Solution.** Confirmer:
+  - Installation de pré-requis.
+    - Chez le système d'exploitation Windows, l'installation de RTools. Pour certains packages, R se sert de code en d'autres langues (e.g., C++ pour des opérations plus performantes). Pour l'employer dans un package, il faut le "compiler". Pour ce faire, on a besoin de RTools. Dans l'absence de ce programme, impossible d'installer certains packages.
+    - Chez le système d'exploitation Linux, l'installation a besoins de certains packages Linux. Si cela s'applique à vous, veuillez contacter l'équipe de développement de ce programme pour une liste des packages Linux requis.
+  - Ouverture du projet comme un projet. Pour installer les packages requis dans la manière escomptée, il faut ouvrir ce projet en tant que tel. Voir [ici](#lancer) pour plus de détails.
+
+#### `curl::curl_fetch_memory() 
+
+- **Problème.** Le serveur a trop tardé à répondre au programme (i.e., à l'outil employé par le programme pour communiquer avec le serveur). Le programme échoue en raison de non-réponse du serveur.
+- **Solution.** Une recherche de solution est en cours. Ce problème s'applique au téléchargement automatisé des données et des images, respectivement. En attendant une meilleure solution, si le téléchargement échoue, il est conseillé de télécharger manuellement dans le bon répertoire et de lancer les autre programmes normalement.
+
+Pour les données :
+
+- Télécharger ici :`01_obtenir\01_donnees`
+- Décomprimer dans des sous-dossiers dans ce même dossier
+
+Pour les images :
+- Télécharger ici `01_obtenir\02_images`
+- Décomprimer dans des sous-dossiers dans ce même dossier
