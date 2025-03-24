@@ -80,7 +80,13 @@ Avant de lancer le programme, fournir les détails de connexion dans `_details_s
 
 ### Utilisation régulière
 
-Pour chaque action, un programme à exécuter :
+### Ouvrir
+
+Ouvrir le projet en tant que tel. En particulier, double-cliquer sur `nsu_sgd.Rproj`. Ceci aura l'effet de l'ouvrir dans RStudio et d'enclencher l'activation de l'environment du projet (e.g., installer les packages requis au niveau du projet). (Pour en savoir plus, lire [ici](https://rstats.wtf/projects#rstudio-projects) et [ici](https://support.posit.co/hc/en-us/articles/200526207-Using-RStudio-Projects).)
+
+### Lancer
+
+Pour chaque action, exécuter le programme afférant :
 
 - **`01_obtenir_01_donnees.R`**. Télécharger et décomprimer les données brutes. Résultats dans : `01_obtenir/01_donnees`.
 - **`01_obtenir_02_images.R`**. Télécharger et décomprimer les images. Résultats dans : `01_obtenir/02_images`.
