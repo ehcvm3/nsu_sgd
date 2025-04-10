@@ -24,6 +24,13 @@ url_base <- httr::modify_url(
 ```
 
 ```{r}
+#| label: créer le chemin pour les données de sortie
+
+dir_donnees_sortie <- here::here("05_suivre", "donnees")
+
+```
+
+```{r}
 #| label: fournir une traduction de l'interface des tableaux reactable
 
 # reactable UI text
@@ -66,6 +73,11 @@ marches_par_strate <- marches_df |>
 marches_par_strate_df <- strates_df |>
   dplyr::left_join(marches_par_strate, by = "marche_strate") |>
   dplyr::mutate(marche_strate = labelled::to_character(marche_strate))
+
+haven::write_dta(
+  data = marches_par_strate_df,
+  path = here::here(dir_donnees_sortie, "marches_par_strate.dta")
+)
 
 marches_par_strate_tbl <- reactable::reactable(
   data = marches_par_strate_df,
@@ -208,6 +220,16 @@ marches_releves_sommaire <- marches_et_releves |>
     marche_strate_code, marche_strate_nom, marche_nom,
     n_produits, avg_releves_par_produit
   )
+
+haven::write_dta(
+  data = marches_releves_sommaire,
+  path = here::here(dir_donnees_sortie, "marches_releves_sommaire.dta")
+)
+
+haven::write_dta(
+  data = n_releves_par_marche,
+  path = here::here(dir_donnees_sortie, "n_releves_par_marche.dta")
+)
 
 marches_n_releves <- reactable::reactable(
   data = marches_releves_sommaire,
@@ -359,7 +381,7 @@ identifier_mesures_inconsistentes <- function(
 ### Poids
 
 ```{r}
-#| label: créer les données du tableau d'inconsistences du poids
+#| label: créer et sauvegarder les données du tableau d'inconsistences du poids
 
 inconsistences_poids <- identifier_mesures_inconsistentes(
   df = mesures_avec_marches,
@@ -372,6 +394,16 @@ marches_avec_inconsistences_poids <- inconsistences_poids |>
     n_unites = dplyr::n_distinct(unites__id)
   ) |>
 	dplyr::ungroup()
+
+haven::write_dta(
+  data = inconsistences_poids,
+  path = here::here(dir_donnees_sortie, "inconsistences_poids.dta")
+)
+
+haven::write_dta(
+  data = marches_avec_inconsistences_poids,
+  path = here::here(dir_donnees_sortie, "marches_avec_inconsistences_poids.dta")
+)
 
 ```
 
@@ -425,7 +457,7 @@ mesures_poids_inconsistentes
 ### Prix
 
 ```{r}
-#| label: créer les données du tableau d'inconsistences du prix
+#| label: créer et sauvegarder les données du tableau d'inconsistences du prix
 
 inconsistences_prix <- identifier_mesures_inconsistentes(
   df = mesures_avec_marches,
@@ -438,6 +470,16 @@ marches_avec_inconsistences_prix <- inconsistences_prix |>
     n_unites = dplyr::n_distinct(unites__id)
   ) |>
 	dplyr::ungroup()
+
+haven::write_dta(
+  data = inconsistences_prix,
+  path = here::here(dir_donnees_sortie, "inconsistences_prix.dta")
+)
+
+haven::write_dta(
+  data = marches_avec_inconsistences_prix,
+  path = here::here(dir_donnees_sortie, "marches_avec_inconsistences_prix.dta")
+)
 
 ```
 
@@ -580,6 +622,11 @@ poids_aberrants <- mesures_plus_seuils |>
     raison
   )
 
+haven::write_dta(
+  data = poids_aberrants,
+  path = here::here(dir_donnees_sortie, "poids_aberrants.dta")
+)
+
 poids_aberrants_tbl <- reactable::reactable(
   data = poids_aberrants,
   columns = list(
@@ -634,6 +681,11 @@ prix_aberrants <- mesures_plus_seuils |>
     produits__id, unites__id, tailles__id,
     raison
   )
+
+haven::write_dta(
+  data = prix_aberrants,
+  path = here::here(dir_donnees_sortie, "prix_aberrants.dta")
+)
 
 prix_aberrants_tbl <- reactable::reactable(
   data = prix_aberrants,

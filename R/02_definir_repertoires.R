@@ -21,3 +21,4 @@ groupes <- c(
 # 05 - suivre
 dir_suivre <- here::here("05_suivre")
 dir_suivre_rapport_modele <- fs::path(dir_suivre, "inst")
+dir_suivre_donnees <- here::here(dir_suivre, "donnees")

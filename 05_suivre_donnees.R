@@ -62,6 +62,14 @@ tryCatch(
   fs::file_delete(chemin_rapport_sortie)
 )
 
+# purger les anciennes données
+donnees_a_supprimer <- fs::dir_ls(
+  path = dir_suivre_donnees,
+  type = "file",
+  regexp = "\\.dta"
+)
+fs::file_delete(donnees_a_supprimer)
+
 # créer le document in situ
 quarto::quarto_render(
   input = chemin_rapport_modele,
