@@ -395,10 +395,22 @@ marches_avec_inconsistences_poids <- inconsistences_poids |>
   ) |>
 	dplyr::ungroup()
 
-haven::write_dta(
-  data = inconsistences_poids,
-  path = here::here(dir_donnees_sortie, "inconsistences_poids.dta")
-)
+
+inconsistences_poids |>
+  dplyr::mutate(
+    lien = interview__key,
+    interview__id = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=Review\\/).+?(?=\\'>)"
+    ),
+    interview__key = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=>).+?(?=<\\/)"
+    )
+  ) |>
+  haven::write_dta(
+    path = here::here(dir_donnees_sortie, "inconsistences_poids.dta")
+  )
 
 haven::write_dta(
   data = marches_avec_inconsistences_poids,
@@ -471,10 +483,21 @@ marches_avec_inconsistences_prix <- inconsistences_prix |>
   ) |>
 	dplyr::ungroup()
 
-haven::write_dta(
-  data = inconsistences_prix,
-  path = here::here(dir_donnees_sortie, "inconsistences_prix.dta")
-)
+inconsistences_prix |>
+  dplyr::mutate(
+    lien = interview__key,
+    interview__id = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=Review\\/).+?(?=\\'>)"
+    ),
+    interview__key = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=>).+?(?=<\\/)"
+    )
+  ) |>
+  haven::write_dta(
+    path = here::here(dir_donnees_sortie, "inconsistences_prix.dta")
+  )
 
 haven::write_dta(
   data = marches_avec_inconsistences_prix,
@@ -622,10 +645,21 @@ poids_aberrants <- mesures_plus_seuils |>
     raison
   )
 
-haven::write_dta(
-  data = poids_aberrants,
-  path = here::here(dir_donnees_sortie, "poids_aberrants.dta")
-)
+poids_aberrants |>
+  dplyr::mutate(
+    lien = interview__key,
+    interview__id = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=Review\\/).+?(?=\\'>)"
+    ),
+    interview__key = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=>).+?(?=<\\/)"
+    )
+  ) |>
+  haven::write_dta(
+    path = here::here(dir_donnees_sortie, "poids_aberrants.dta")
+  )
 
 poids_aberrants_tbl <- reactable::reactable(
   data = poids_aberrants,
@@ -682,10 +716,21 @@ prix_aberrants <- mesures_plus_seuils |>
     raison
   )
 
-haven::write_dta(
-  data = prix_aberrants,
-  path = here::here(dir_donnees_sortie, "prix_aberrants.dta")
-)
+prix_aberrants |>
+  dplyr::mutate(
+    lien = interview__key,
+    interview__id = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=Review\\/).+?(?=\\'>)"
+    ),
+    interview__key = stringr::str_extract(
+      string = lien,
+      pattern = "(?<=>).+?(?=<\\/)"
+    )
+  ) |>
+  haven::write_dta(
+    path = here::here(dir_donnees_sortie, "prix_aberrants.dta")
+  )
 
 prix_aberrants_tbl <- reactable::reactable(
   data = prix_aberrants,
